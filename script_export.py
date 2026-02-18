@@ -39,10 +39,10 @@ async def create_image_graph(product_id):
     # Формируем данные для графика
     for item in xy:
         x.append(item[0])
-        y.append(item[1])
+        y.append(item[1]/100)
 
     # Строим график
-    plt.plot(x, y, color="green", marker="o", markersize=7)
+    plt.plot(x, y, color="blue", marker="o", markersize=3)
     plt.xticks([])  # Убираем метки оси X
     plt.xlabel(legenda + start_time, fontsize=10)  # Подпись для оси X
     plt.ylabel("Цена, BYN")  # Подпись для оси Y
@@ -94,7 +94,10 @@ async def create_exel(product_id):
         # Преобразуем дату
         start_time = str(await convert_date_to_str(item[2], 3))
         a2.append(start_time)
-        a3.append(item[1])
+        if item[1]:
+            a3.append(float(item[1])/100)
+        else:
+            a3.append('')
 
     data = {"№п.п": a1, "Дата": a2, "Цена": a3}
     df = pd.DataFrame(data)
