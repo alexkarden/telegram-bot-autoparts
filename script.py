@@ -4,51 +4,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from database import add_new_price_product, check_price_product
-from sites.onlinerby import get_info_from_item_onlinerby
-from sites.remzonaby import get_info_from_item_remzonaby
-from sites.shate import get_info_from_item_shate
-from sites.site21vekby import get_info_from_item_21vekby
-from sites.wbby import get_info_from_item_wbby
 
-
-# -----------------------------------------------------------------------------------------------------------------------выбор сайтов
-async def is_link_belongs_to_site(url):
-
-    # Разбираем URL
-    parsed_url = urlparse(url)
-    clear_url = parsed_url.netloc + parsed_url.path
-    hostname = parsed_url.hostname
-
-    # Выбираем сайт и вызываем асинхронные функции
-    # onliner.by
-    if hostname in ["catalog.onliner.by", "www.catalog.onliner.by"]:
-        # Разделяем URL по символу '/'
-        path_parts = clear_url.split("/")
-        # Последний элемент — нужное значение
-        value = path_parts[-1]
-        url_onliner = 'https://catalog.api.onliner.by/products/'+value
-
-        return await get_info_from_item_onlinerby(await get_item_from_url(url_onliner,0))
-    elif hostname in ["www.remzona.by", "remzona.by"]:
-        url_remzona = parsed_url.scheme + "://" + clear_url
-        return await get_info_from_item_remzonaby(await get_item_from_url(url_remzona,1))
-    elif hostname in ["www.shate-mag.by", "shate-mag.by"]:
-        url_shate = parsed_url.scheme + "://" + clear_url
-
-        return await get_info_from_item_shate(await get_item_from_url(url_shate,1))
-    elif hostname in ["www.21vek.by", "m.21vek.by", "21vek.by"]:
-        str_21vek = clear_url.replace("m.", "www.", 1)
-        url_21vek = parsed_url.scheme + "://" + str_21vek
-        return await get_info_from_item_21vekby(await get_item_from_url(url_21vek,0))
-    elif hostname in ["www.wildberries.by", "www.wildberries.ru"]:
-        # Разделяем URL по символу '/'
-        path_parts = clear_url.split("/")
-        # Последний элемент — нужное значение
-        value = path_parts[-2]
-        url_wb = f"https://card.wb.ru/cards/v2/list?curr=byn&dest=-59202&nm={value}&ignore_stocks=true"
-        return await get_info_from_item_wbby(await get_item_from_url(url_wb,1))
-    return None
 
 
 # -----------------------------------------------------------------------------------------------------------------------
@@ -123,3 +79,4 @@ async def convert_date_to_str(date_sec, hours):
         # Выводим сообщение об ошибке, если произошла ошибка во время преобразования
         logging.exception(f"Ошибка преобразования даты: {e}")
         return None  # Возвращаем None в случае ошибки
+
